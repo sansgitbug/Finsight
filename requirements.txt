@@ -1,1 +1,1 @@
-# FinSight currently uses only the Python standard library.
+transformers>=4.40,<5
