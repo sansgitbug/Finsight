@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Protocol, Sequence
 
 import numpy as np
-from src.chunker import Chunk
+from src.preprocessing.chunker import Chunk
 
 if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer

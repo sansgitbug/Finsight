@@ -4,9 +4,9 @@ from pathlib import Path
 
 import numpy as np
 
-from src.chunker import Chunk
-from src.embeddings import Embedding
-from src.vectorstore import VectorStoreConfig, add_embeddings, build_vector_store, load, search
+from src.preprocessing.chunker import Chunk
+from src.preprocessing.embeddings import Embedding
+from src.retrieval.vectorstore import VectorStoreConfig, add_embeddings, build_vector_store, load, search
 
 
 def make_embedding(chunk_id: str, vector: list[float], section_name: str = "Business") -> Embedding:
@@ -41,7 +41,7 @@ class VectorStoreTests(unittest.TestCase):
             store = build_vector_store([make_embedding("chunk-one", [1.0, 0.0])], config)
             initial_id = next(iter(store.id_map))
             add_embeddings(store, [make_embedding("chunk-one", [0.0, 1.0], "Updated")])
-            from src.vectorstore import save
+            from src.retrieval.vectorstore import save
 
             save(store)
             loaded = load(config)

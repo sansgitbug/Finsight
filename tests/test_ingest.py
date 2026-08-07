@@ -2,7 +2,7 @@ import gzip
 import unittest
 import zlib
 
-from src.ingest import SecRequestError, _decode_response_body
+from src.ingestion.ingest import SecRequestError, _decode_response_body
 
 
 class DecodeResponseBodyTests(unittest.TestCase):

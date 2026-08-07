@@ -5,8 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
-from src.chunker import Chunk
-from src.embeddings import EmbeddingConfig, embed_chunks, load_chunks, load_embeddings, save_embeddings
+from src.preprocessing.chunker import Chunk
+from src.preprocessing.embeddings import EmbeddingConfig, embed_chunks, load_chunks, load_embeddings, save_embeddings
 
 
 class FakeEmbeddingModel:

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.chunker import ChunkingConfig, build_chunks, chunk_filing, detect_sections
+from src.preprocessing.chunker import ChunkingConfig, build_chunks, chunk_filing, detect_sections
 
 
 class WhitespaceTokenizer:

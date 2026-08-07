@@ -11,8 +11,8 @@ from typing import Any, Protocol, Sequence
 
 import numpy as np
 
-from src.embeddings import EmbeddingConfig, EmbeddingError, load_embedding_model
-from src.vectorstore import SearchResult, VectorStore, VectorStoreConfig, VectorStoreError, load_vector_store, search
+from src.preprocessing.embeddings import EmbeddingConfig, EmbeddingError, load_embedding_model
+from src.retrieval.vectorstore import SearchResult, VectorStore, VectorStoreConfig, VectorStoreError, load_vector_store, search
 
 LOGGER = logging.getLogger(__name__)
 

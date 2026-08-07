@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.indexer import Indexer, IndexerConfig
+from src.retrieval.indexer import Indexer, IndexerConfig
 
 
 class FakeEmbeddingModel:

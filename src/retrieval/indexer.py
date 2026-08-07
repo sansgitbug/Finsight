@@ -8,9 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
-from src.chunker import Chunk
-from src.embeddings import Embedding, EmbeddingConfig, EmbeddingError, EmbeddingModel, embed_chunks, load_chunks, save_embeddings
-from src.vectorstore import VectorStore, VectorStoreConfig, VectorStoreError, build_vector_store as create_vector_store
+from src.preprocessing.chunker import Chunk
+from src.preprocessing.embeddings import Embedding, EmbeddingConfig, EmbeddingError, EmbeddingModel, embed_chunks, load_chunks, save_embeddings
+from src.retrieval.vectorstore import VectorStore, VectorStoreConfig, VectorStoreError, build_vector_store as create_vector_store
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class IndexingError(Exception):
     """Raised when chunks cannot be transformed into a persisted retrieval index."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True) 
 class IndexerConfig:
     """Input, output, and shared embedding settings for index construction."""
 

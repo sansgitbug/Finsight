@@ -12,8 +12,8 @@ import chromadb
 import faiss
 import numpy as np
 
-from src.chunker import Chunk
-from src.embeddings import Embedding
+from src.preprocessing.chunker import Chunk
+from src.preprocessing.embeddings import Embedding
 
 LOGGER = logging.getLogger(__name__)
 

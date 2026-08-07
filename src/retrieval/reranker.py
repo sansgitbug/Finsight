@@ -13,7 +13,7 @@ from typing import Sequence
 
 from sentence_transformers import CrossEncoder
 
-from src.vectorstore import SearchResult
+from src.retrieval.vectorstore import SearchResult
 
 from dataclasses import asdict
 import json

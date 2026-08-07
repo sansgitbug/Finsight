@@ -1,5 +1,5 @@
-from src.retriever import Retriever
-from src.reranker import Reranker
+from src.retrieval.retriever import Retriever
+from src.retrieval.reranker import Reranker
 
 QUERY = "How did iPhone revenue change?"
 

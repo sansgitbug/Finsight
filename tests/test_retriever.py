@@ -4,10 +4,10 @@ from pathlib import Path
 
 import numpy as np
 
-from src.chunker import Chunk
-from src.embeddings import Embedding
-from src.retriever import Retriever, RetrieverConfig
-from src.vectorstore import VectorStoreConfig, build_vector_store
+from src.preprocessing.chunker import Chunk
+from src.preprocessing.embeddings import Embedding
+from src.retrieval.retriever import Retriever, RetrieverConfig
+from src.retrieval.vectorstore import VectorStoreConfig, build_vector_store
 
 
 class FakeQueryModel:
