@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+
+mlruns/
+
+chroma/
+*.faiss
+
+.vscode/
+
+# Generated SEC filings
+data/
