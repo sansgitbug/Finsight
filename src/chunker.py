@@ -14,9 +14,10 @@ import re
 from argparse import ArgumentParser, Namespace
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Protocol, Sequence
 
-from transformers import AutoTokenizer, PreTrainedTokenizerBase
+if TYPE_CHECKING:
+    from transformers import PreTrainedTokenizerBase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -281,9 +282,11 @@ def chunk_directory(data_dir: Path, chunks_dir: Path | None = None, config: Chun
     return outputs
 
 
-def _load_tokenizer(config: ChunkingConfig) -> PreTrainedTokenizerBase:
+def _load_tokenizer(config: ChunkingConfig) -> Any:
     """Load the configured Hugging Face tokenizer with a clear domain error."""
     try:
+        from transformers import AutoTokenizer
+
         return AutoTokenizer.from_pretrained(config.tokenizer_name)
     except (OSError, ValueError) as exc:
         raise ChunkingError(f"Unable to load tokenizer {config.tokenizer_name!r}: {exc}") from exc

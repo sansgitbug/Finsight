@@ -13,3 +13,5 @@ chroma/
 # Generated SEC filings
 data/
 chunks/
+embeddings/
+vectorstore/

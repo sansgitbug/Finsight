@@ -1,1 +1,4 @@
 transformers>=4.40,<5
+sentence-transformers>=3.0,<4
+faiss-cpu>=1.8,<2
+chromadb>=0.5,<2
