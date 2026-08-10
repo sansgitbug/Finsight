@@ -5,6 +5,7 @@ FinSight is a financial research system for SEC EDGAR filings. Enter any public 
 Built to understand what happens underneath RAG systems, retrieval, reranking, attribution, and grounded generation rather than wrapping an existing framework.
 
 ---
+![FinSight UI](frontend/finsight.png)
 
 ## Architecture
 
