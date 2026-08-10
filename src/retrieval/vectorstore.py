@@ -242,5 +242,26 @@ def _mapping_path(index_path: Path) -> Path:
     """Return the sidecar path for the explicit FAISS-ID mapping."""
     return index_path.with_suffix(index_path.suffix + ".mapping.json")
 
+def get_all_chunks(store: VectorStore) -> list[Chunk]:
+    """
+    Return every stored Chunk from the Chroma collection.
 
-__all__ = ["SearchResult", "VectorStore", "VectorStoreConfig", "VectorStoreError", "add_embeddings", "build_vector_store", "load", "load_vector_store", "save", "search"]
+    This is used by sparse retrievers such as BM25 to build a lexical index
+    over the same corpus stored in the dense vector database.
+    """
+
+    try:
+        records = store.collection.get(include=["metadatas"])
+    except Exception as exc:
+        raise VectorStoreError(
+            f"Unable to retrieve chunks from ChromaDB: {exc}"
+        ) from exc
+
+    chunks: list[Chunk] = []
+
+    for metadata in records["metadatas"]:
+        chunks.append(_chunk_from_chroma_metadata(metadata))
+
+    return chunks
+
+__all__ = ["SearchResult", "VectorStore", "VectorStoreConfig", "VectorStoreError", "add_embeddings", "build_vector_store", "load", "load_vector_store", "save", "search", "get_all_chunks"]

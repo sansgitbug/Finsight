@@ -1,9 +1,9 @@
-from src.retrieval.retriever import Retriever
+from src.retrieval.dense import DenseRetriever
 from src.retrieval.reranker import Reranker
 
 QUERY = "How did iPhone revenue change?"
 
-retriever = Retriever()
+retriever = DenseRetriever()
 results = retriever.retrieve_from_text(QUERY)
 
 print(f"\nRetrieved {len(results)} candidates.\n")

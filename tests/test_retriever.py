@@ -6,7 +6,7 @@ import numpy as np
 
 from src.preprocessing.chunker import Chunk
 from src.preprocessing.embeddings import Embedding
-from src.retrieval.retriever import Retriever, RetrieverConfig
+from src.retrieval.dense import DenseRetriever, DenseRetrieverConfig
 from src.retrieval.vectorstore import VectorStoreConfig, build_vector_store
 
 
@@ -36,8 +36,8 @@ class RetrieverTests(unittest.TestCase):
                 ],
                 VectorStoreConfig(root / "faiss.index", root / "chroma", "retriever_chunks"),
             )
-            retriever = Retriever(
-                RetrieverConfig(top_k=2, embedding_model="offline-test-model", device="cpu"),
+            retriever = DenseRetriever(
+                DenseRetrieverConfig(top_k=2, embedding_model="offline-test-model", device="cpu"),
                 model=FakeQueryModel(),
                 vector_store=store,
             )
@@ -49,7 +49,11 @@ class RetrieverTests(unittest.TestCase):
             self.assertEqual(results[0].metadata, {"source": "test"})
 
     def test_embed_query_rejects_blank_query(self) -> None:
-        retriever = Retriever(RetrieverConfig(embedding_model="offline-test-model"), model=FakeQueryModel())
+        retriever = DenseRetriever(
+            DenseRetrieverConfig(embedding_model="offline-test-model", device="cpu"),
+            model=FakeQueryModel(),
+            vector_store=None,
+            )
 
         with self.assertRaisesRegex(ValueError, "non-empty"):
             retriever.embed_query("   ")
