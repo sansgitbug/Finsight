@@ -1,3 +1,4 @@
+
 """
 Evaluation metrics for FinSight retrieval.
 
@@ -35,9 +36,6 @@ def _validate_inputs(
     if k <= 0:
         raise ValueError("k must be greater than zero")
 
-    if not results:
-        raise EvaluationError("retrieval results cannot be empty")
-
     if not relevant_chunk_ids:
         raise EvaluationError(
             "relevant_chunk_ids cannot be empty"
@@ -49,11 +47,7 @@ def recall_at_k(
     relevant_chunk_ids: set[str],
     k: int,
 ) -> float:
-    """
-    Calculate Recall@K.
-
-    Recall@K = relevant retrieved documents / total relevant documents.
-    """
+    """Calculate Recall@K."""
 
     _validate_inputs(results, relevant_chunk_ids, k)
 
@@ -72,49 +66,30 @@ def precision_at_k(
     relevant_chunk_ids: set[str],
     k: int,
 ) -> float:
-    """
-    Calculate Precision@K.
-
-    Precision@K = relevant retrieved documents / K.
-    """
+    """Calculate Precision@K."""
 
     _validate_inputs(results, relevant_chunk_ids, k)
 
     retrieved = results[:k]
-
-    if not retrieved:
-        return 0.0
 
     hits = sum(
         result.chunk.chunk_id in relevant_chunk_ids
         for result in retrieved
     )
 
-    return hits / len(retrieved)
+    return hits / k
 
 
 def reciprocal_rank(
     results: Sequence[SearchResult],
     relevant_chunk_ids: set[str],
+    k: int = 5,
 ) -> float:
-    """
-    Calculate Reciprocal Rank.
+    """Calculate reciprocal rank within the top K results."""
 
-    Returns 1/rank of the first relevant result, or 0 if none
-    of the retrieved results are relevant.
-    """
+    _validate_inputs(results, relevant_chunk_ids, k)
 
-    if not results:
-        raise EvaluationError(
-            "retrieval results cannot be empty"
-        )
-
-    if not relevant_chunk_ids:
-        raise EvaluationError(
-            "relevant_chunk_ids cannot be empty"
-        )
-
-    for rank, result in enumerate(results, start=1):
+    for rank, result in enumerate(results[:k], start=1):
         if result.chunk.chunk_id in relevant_chunk_ids:
             return 1.0 / rank
 
@@ -127,9 +102,7 @@ def evaluate_retrieval(
     relevant_chunk_ids: set[str],
     k: int = 5,
 ) -> RetrievalEvaluation:
-    """
-    Evaluate one retrieval query using Recall@K, Precision@K, and MRR.
-    """
+    """Evaluate one query using Recall@K, Precision@K, and MRR@K."""
 
     if not query or not query.strip():
         raise ValueError("query must be non-empty")
@@ -150,6 +123,7 @@ def evaluate_retrieval(
         reciprocal_rank=reciprocal_rank(
             results,
             relevant_chunk_ids,
+            k,
         ),
     )
 

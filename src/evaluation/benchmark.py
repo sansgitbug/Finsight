@@ -77,7 +77,7 @@ def run_benchmark(
     hybrid.load()
 
     # Build BM25 over the same corpus used by the vector store.
-    from src.retrieval.vectorstore import get_all_chunks
+    from src.retrieval.vectorstore import SearchResult, get_all_chunks
 
     assert hybrid._vector_store is not None
 
@@ -98,23 +98,24 @@ def run_benchmark(
         relevant_ids = set(item["relevant_chunk_ids"])
 
         dense_results = dense.retrieve_from_text(query, top_k=k)
-        bm25_results = [
-            result
-            for result in bm25.search(query, top_k=k)
-        ]
+        bm25_results = bm25.search(
+            query,
+            top_k=k,
+            ticker = item["ticker"],
+        )
 
         # BM25Result does not use the same SearchResult type,
         # so only evaluate its shared chunk identity.
         bm25_search_results = [
-            type(dense_results[0])(
+            SearchResult(
                 chunk=result.chunk,
                 score=result.score,
                 metadata=dict(result.chunk.metadata),
             )
             for result in bm25_results
-        ] if dense_results else []
+        ]
 
-        hybrid_results = hybrid.retrieve_from_text(query)
+        hybrid_results = hybrid.retrieve_from_text(query, ticker=item["ticker"],)
 
         reranked_results = reranker.rerank(
             query,
@@ -136,6 +137,34 @@ def run_benchmark(
                 k,
             )
 
+            # Handle both ordinary results and reranker-wrapped results.
+            normalized_results = [
+                result.result if hasattr(result, "result") else result
+                for result in strategy_results
+            ]
+
+            top_results = normalized_results[:k]
+            retrieved_ids = [
+                result.chunk.chunk_id
+                for result in top_results
+            ]
+            relevant_found = [
+                chunk_id
+                for chunk_id in retrieved_ids
+                if chunk_id in relevant_ids
+            ]
+
+            print(f"\nQuery: {query}")
+            print(f"Strategy: {strategy}")
+            print(f"Relevant IDs found: {relevant_found}")
+            print(f"Relevant chunks retrieved: {len(set(relevant_found))}/{len(relevant_ids)}")
+            print(f"Top-{k} chunk IDs: {retrieved_ids}")
+            print(
+                f"Recall@{k}: {recall:.3f} | "
+                f"Precision@{k}: {precision:.3f} | "
+                f"MRR@{k}: {mrr:.3f}"
+            )
+
             results.append(
                 BenchmarkResult(
                     strategy=strategy,
@@ -144,6 +173,7 @@ def run_benchmark(
                     reciprocal_rank=mrr,
                 )
             )
+
 
     return results
 
@@ -185,6 +215,7 @@ def print_summary(results: list[BenchmarkResult]) -> None:
 def save_report(
     results: list[BenchmarkResult],
     output: Path,
+    k: int = 5,
 ) -> None:
     """Save aggregate retrieval metrics as JSON."""
 
@@ -196,22 +227,10 @@ def save_report(
     ]
 
     report = {
-        "query_count": len(
-            {
-                # Each strategy is evaluated once per query.
-                # The total number of rows is therefore divided by
-                # the number of strategies.
-                result.strategy
-                for result in results
-            }
-        ),
-        "k": 5,
+        "query_count": len(results) // len(strategies),
+        "k": k,
         "strategies": {},
     }
-
-    # Number of benchmark queries.
-    if strategies:
-        report["query_count"] = len(results) // len(strategies)
 
     for strategy in strategies:
         rows = [
@@ -248,7 +267,7 @@ def save_report(
 
 if __name__ == "__main__":
     benchmark_results = run_benchmark(
-        Path("data/evaluation_queries.json"),
+        Path("data/evaluation_queries_v2.json"),
         k=5,
     )
 
@@ -256,7 +275,8 @@ if __name__ == "__main__":
 
     save_report(
         benchmark_results,
-        Path("results/retrieval_benchmark.json"),
+        Path("results/retrieval_benchmark_v2.json"),
+        k=5,
     )
 
     print(
